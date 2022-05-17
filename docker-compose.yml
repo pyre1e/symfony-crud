@@ -1,0 +1,51 @@
+version: "3.3"
+
+services:
+  db:
+    container_name: ${APP_NAME}-db
+    build:
+      context: ./docker/db
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    ports:
+        - 15432:5432
+
+  php-fpm:
+    container_name: ${APP_NAME}-php-fpm
+    build:
+      context: ./docker/php-fpm
+    depends_on:
+      - db
+    environment:
+      APP_ENV: ${APP_ENV}
+      APP_SECRET: ${APP_SECRET}
+      DATABASE_URL: ${DATABASE_URL}
+    volumes:
+      - ./src:/var/www
+
+  nginx:
+    image: nginx:latest
+    container_name: ${APP_NAME}-nginx
+    volumes:
+      - ./src/:/var/www
+      - ./docker/nginx/:/etc/nginx/conf.d/
+      - ./var/log/nginx/:/var/log/nginx
+    depends_on:
+      - php-fpm
+    ports:
+      - "80:80"
+
+  pgadmin:
+    container_name: ${APP_NAME}-pgadmin
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${DB_MAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${DB_PASS}
+    ports:
+      - "5050:80"
+    restart: always
+    depends_on:
+      - db
