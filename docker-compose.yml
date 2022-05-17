@@ -1,30 +1,32 @@
 version: "3.3"
 
 services:
-  db:
-    container_name: ${APP_NAME}-db
+  postgres:
+    container_name: ${APP_NAME}-postgres
     build:
-      context: ./docker/db
+      context: ./docker/postgres
     restart: always
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
     ports:
-        - 15432:5432
+      - "5432:5432"
 
   php-fpm:
     container_name: ${APP_NAME}-php-fpm
     build:
       context: ./docker/php-fpm
     depends_on:
-      - db
-    environment:
-      APP_ENV: ${APP_ENV}
-      APP_SECRET: ${APP_SECRET}
-      DATABASE_URL: ${DATABASE_URL}
+      - postgres
     volumes:
       - ./src:/var/www
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      APP_ENV: ${APP_ENV}
+      APP_SECRET: ${APP_ENV}
+    links:
+      - postgres
 
   nginx:
     image: nginx:latest
@@ -48,4 +50,4 @@ services:
       - "5050:80"
     restart: always
     depends_on:
-      - db
+      - postgres
