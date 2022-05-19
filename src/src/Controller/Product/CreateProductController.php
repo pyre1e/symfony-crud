@@ -10,11 +10,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ProductRepository;
 use App\Entity\Product;
-use App\Traits\ResponseTrait;
-use App\Errors;
+use App\Trait\ResponseTrait;
+use App\Error;
 
 #[Route('/api/product', name: 'app_product_add', methods: ['POST'])]
-class PostProductController extends AbstractController
+class CreateProductController extends AbstractController
 {
     use ResponseTrait;
 
@@ -37,7 +37,7 @@ class PostProductController extends AbstractController
         ]));
 
         if (count($errors) > 0) {
-            return $this->error(new Errors\InvalidRequest($errors));
+            return $this->error(new Error\InvalidRequest($errors));
         }
 
         $product = new Product();

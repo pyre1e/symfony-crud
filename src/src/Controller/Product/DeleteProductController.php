@@ -4,14 +4,12 @@ namespace App\Controller\Product;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Validator\Constraints;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ProductRepository;
-use App\Entity\Product;
-use App\Traits\ResponseTrait;
-use App\Errors;
+use App\Trait\ResponseTrait;
+use App\Error;
 
 #[Route('/api/product', name: 'app_product_delete', methods: ['DELETE'])]
 class DeleteProductController extends AbstractController
@@ -28,7 +26,7 @@ class DeleteProductController extends AbstractController
         $product = $this->productRepository->find((int)$request->get('id'));
 
         if (!$product) {
-            return $this->error(new Errors\Product\NotFoundError());
+            return $this->error(new Error\Product\NotFoundError());
         }
 
         $this->productRepository->remove($product, true);

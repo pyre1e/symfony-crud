@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Traits;
+namespace App\Trait;
 
-use App\Interfaces\Error;
+use App\Interface\Error;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 trait ResponseTrait
@@ -13,8 +13,8 @@ trait ResponseTrait
             'status' => 0,
             'error' => [
                 'code' => $error->getCode(),
-                'message' => $error->getMessage(),
-                'data' => $error->getData()
+                'description' => $error->getDescription(),
+                'details' => $error->getDetails()
             ]
         ]);
     }

@@ -7,10 +7,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ProductRepository;
-use App\DTO\ProductDTO;
-use App\DTO\ProductCollectionDTO;
-use App\Traits\ResponseTrait;
-use App\Errors;
+use App\Trait\ResponseTrait;
+use App\Error;
 
 #[Route('/api/product', name: 'app_product_get', methods: ['GET'])]
 class GetProductController extends AbstractController
@@ -28,12 +26,10 @@ class GetProductController extends AbstractController
             $product = $this->productRepository->find($id);
 
             if (!$product) {
-                return $this->error(new Errors\Product\NotFoundError());
+                return $this->error(new Error\Product\NotFoundError());
             }
-            
-            $dto = new ProductDTO($product);
 
-            return $this->success($dto->toJson());
+            return $this->success($product);
         }
         else
         {
@@ -42,9 +38,7 @@ class GetProductController extends AbstractController
 
             $products = $this->productRepository->getPaginated($page, $size);
 
-            $dto = new ProductCollectionDTO($products);
-
-            return $this->success($dto->toJson());
+            return $this->success($products);
         }
     }
 }

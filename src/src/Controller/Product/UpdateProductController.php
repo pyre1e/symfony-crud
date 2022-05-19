@@ -9,12 +9,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ProductRepository;
-use App\Entity\Product;
-use App\Traits\ResponseTrait;
-use App\Errors;
+use App\Trait\ResponseTrait;
+use App\Error;
 
-#[Route('/api/product', name: 'app_product_update', methods: ['PATCH'])]
-class PatchProductController extends AbstractController
+#[Route('/api/product', name: 'app_product_update', methods: ['PUT'])]
+class UpdateProductController extends AbstractController
 {
     use ResponseTrait;
 
@@ -40,13 +39,13 @@ class PatchProductController extends AbstractController
         ]));
 
         if (count($errors) > 0) {
-            return $this->error(new Errors\InvalidRequest($errors));
+            return $this->error(new Error\InvalidRequest($errors));
         }
 
         $product = $this->productRepository->find($data['id']);
 
         if (!$product) {
-            return $this->error(new Errors\Product\NotFoundError());
+            return $this->error(new Error\Product\NotFoundError());
         }
 
         $product->setName($data['name']);
